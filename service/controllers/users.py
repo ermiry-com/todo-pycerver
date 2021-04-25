@@ -1,3 +1,4 @@
+import ctypes
 import json
 import time
 
@@ -8,6 +9,13 @@ import runtime
 import todo
 
 from models.user import *
+
+def todo_user_load_from_decoded_data (decoded_data):
+	json_string = ctypes.cast (decoded_data, ctypes.c_char_p)
+	user_dict = json.loads (json_string.value)
+	user = user_load (**user_dict)
+
+	return user
 
 def todo_user_get_by_email (email):
 	found = user_get_by_email (email)
