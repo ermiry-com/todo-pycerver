@@ -17,6 +17,9 @@ def end (signum, frame):
 	cerver.http_cerver_all_stats_print (cerver.http_cerver_get (todo_cerver))
 	cerver.cerver_teardown (todo_cerver)
 	cerver.cerver_end ()
+
+	todo_end ();
+
 	sys.exit ("Done!")
 
 def todo_set_todo_routes (http_cerver):

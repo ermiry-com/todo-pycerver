@@ -2,6 +2,7 @@ import os
 
 import cerver
 
+from errors import *
 from runtime import *
 
 RUNTIME = runtime_from_string (os.environ.get ("RUNTIME"))
@@ -42,3 +43,8 @@ def todo_config ():
 	print ("PUB_KEY: ", PUB_KEY)
 
 	print ("ENABLE_USERS_ROUTES: ", ENABLE_USERS_ROUTES)
+
+	todo_errors_init ()
+
+def todo_end ():
+	todo_errors_end ()
