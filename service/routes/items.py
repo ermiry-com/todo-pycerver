@@ -64,7 +64,22 @@ def todo_item_create_handler (http_receive, request):
 # returns information about an existing item that belongs to a user
 @ctypes.CFUNCTYPE (None, ctypes.c_void_p, ctypes.c_void_p)
 def todo_item_get_handler (http_receive, request):
-	pass
+	user = controllers.users.todo_user_load_from_decoded_data (
+		cerver.http_request_get_decoded_data (request)
+	)
+
+	item_id_str = cerver.http_request_get_param_at_idx (
+		request, 0
+	)
+
+	result = controllers.items.todo_item_get_by_id_and_user (
+		item_id_str, user
+	)
+
+	if (result is not None):
+		cerver.http_response_render_json (
+			http_receive, result.encode ("utf-8"), len (result)
+		)
 
 # PUT /api/todo/items/:id/update
 # a user wants to update an existing item
