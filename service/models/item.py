@@ -88,10 +88,31 @@ def item_insert (item):
 
 	return item
 
+def item_update (item):
+	retval = False
+
+	result = items.update_one (
+		{
+			'_id': ObjectId (item.id),
+			'user': ObjectId (item.user_id)
+		},
+		{
+			'$set': {
+				'title': item.title,
+				'description': item.description,
+			}
+		}
+	)
+
+	if (result.modified_count == 1):
+		retval = True
+
+	return retval
+
 def item_delete_by_id_and_user (item_id, user_id):
 	retval = False
 
-	result =  items.delete_one ({
+	result = items.delete_one ({
 		'_id': ObjectId (item_id),
 		'user': ObjectId (user_id)
 	})
