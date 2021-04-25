@@ -1,3 +1,5 @@
+import time
+
 from bson import json_util
 from bson.objectid import ObjectId
 
@@ -11,18 +13,40 @@ class Item ():
 	def __init__ (self):
 		self.id = None
 
-		self.user_oid = None
+		self.user_id = None
 
 		self.title = None
 		self.description = None
 
 		self.date = None
 
-		self.done = None
+		self.done = False
 		self.completed = None
+
+def item_create (title, description, user_id):
+	item = Item ()
+	item.title = title
+	item.description = description
+	item.user_id = user_id
+	item.date = time.time ()
+
+	return item
 
 def items_get_all_by_user (user_id):
 	result = None
 	all_items = items.find ({'user': ObjectId (user_id)})
 	if (all_items is not None):
 		result = json_util.dumps (all_items)
+
+	return result
+
+def item_insert (item):
+	item.id = items.insert ({
+		'title': item.title,
+		'description': item.description,
+		'user': ObjectId (item.user_id),
+		'date': item.date,
+		'done': item.done,
+	})
+
+	return item
