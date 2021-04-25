@@ -32,6 +32,25 @@ def item_create (title, description, user_id):
 
 	return item
 
+def item_parse (item_values):
+	item = Item ()
+
+	item.id = str (item_values["_id"])
+
+	item.user_id = str (item_values["user"])
+
+	item.title = item_values["title"]
+	item.description = item_values["description"]
+
+	item.date = item_values["date"]
+
+	item.done = item_values["done"]
+
+	if ("completed" in item_values):
+		item.completed = item_values["completed"]
+
+	return item
+
 def items_get_all_by_user (user_id):
 	result = None
 	all_items = items.find ({'user': ObjectId (user_id)})
