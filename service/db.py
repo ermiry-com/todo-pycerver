@@ -1,17 +1,27 @@
 import os
 from pymongo import MongoClient
 
+import cerver.utils
+
 import todo
 
-db = None
+from models.user import user_model_init
+
+todo_db = None
 
 def todo_mongo_init ():
-	global db
+	global todo_db
 
 	client = MongoClient (todo.MONGO_URI)
 	try:
-		db = client.todo
-		print ("Mongodb connected!")
+		todo_db = client.todo
+		cerver.utils.cerver_log_success (
+			"Mongo DB connected!".encode ("utf-8")
+		)
+
+		user_model_init (todo_db)
 
 	except:
-		print ("Error connecting to Mongodb (Authentication Failed)")
+		cerver.utils.cerver_log_error (
+			"Error connecting to Mongo DB".encode ("utf-8")
+		)
