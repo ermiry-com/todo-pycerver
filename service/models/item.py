@@ -60,6 +60,12 @@ def items_get_all_by_user (user_id):
 	return result
 
 def item_get_by_id_and_user (item_id, user_id):
+	return items.find_one ({
+		'_id': ObjectId (item_id),
+		'user': ObjectId (user_id)
+	})
+
+def item_get_by_id_and_user_to_json (item_id, user_id):
 	result = None
 	found = items.find_one ({
 		'_id': ObjectId (item_id),

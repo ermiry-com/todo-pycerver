@@ -9,12 +9,19 @@ from models.item import *
 def todo_items_get_all_by_user (user):
 	return items_get_all_by_user (user.id)
 
-def todo_item_get_by_id_and_user (item_id_str, user):
-	return item_get_by_id_and_user (
+def todo_item_get_by_id_and_user (item_id, user):
+	found = item_get_by_id_and_user (item_id, user.id)
+	if (found is not None):
+		return item_parse (found)
+
+	return None
+
+def todo_item_get_by_id_and_user_to_json (item_id_str, user):
+	return item_get_by_id_and_user_to_json (
 		item_id_str.contents.str.decode ("utf-8"), user.id
 	)
 
-def todo_item_create (body_json, user):
+def todo_item_create (user, body_json):
 	error = TODO_ERROR_NONE
 
 	if (body_json is not None):
