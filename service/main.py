@@ -2,6 +2,7 @@ import signal
 
 import cerver
 
+import db
 import service
 from todo import todo_config
 import version
@@ -20,5 +21,7 @@ if __name__ == "__main__":
 	version.todo_version_print_full ()
 
 	todo_config ()
+
+	db.todo_mongo_init ()
 
 	service.start ()
