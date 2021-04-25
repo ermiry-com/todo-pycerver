@@ -29,7 +29,17 @@ def user_create (email, name, username, password=None):
 
 	return user
 
-def user_find_by_email (email):
+def user_parse (user_values):
+	user = User ()
+	user.id = str (user_values["_id"])
+	user.email = user_values["email"]
+	user.name = user_values["name"]
+	user.username = user_values["username"]
+	user.password = user_values["password"]
+	
+	return user
+
+def user_get_by_email (email):
 	return users.find_one ({'email': email})
 
 def user_insert (user):
