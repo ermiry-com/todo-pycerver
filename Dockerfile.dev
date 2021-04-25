@@ -2,4 +2,7 @@ FROM ermiry/pycerver:latest
 
 WORKDIR /home/todo
 
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
 CMD ["/bin/bash"]
