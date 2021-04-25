@@ -39,6 +39,16 @@ def user_parse (user_values):
 	
 	return user
 
+def user_load (id, iat, name, role, username):
+	user = User ()
+	user.id = id
+	user.iat = iat
+	user.name = name
+	user.role = role
+	user.username = username
+
+	return user
+
 def user_get_by_email (email):
 	return users.find_one ({'email': email})
 
