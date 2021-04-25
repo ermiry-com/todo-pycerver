@@ -2,8 +2,8 @@ import cerver.utils
 
 TODO_VERSION = "0.1"
 TODO_VERSION_NAME = "Version 0.1"
-TODO_VERSION_DATE = "08/04/2021"
-TODO_VERSION_TIME = "03:10 CST"
+TODO_VERSION_DATE = "24/04/2021"
+TODO_VERSION_TIME = "23:49 CST"
 TODO_VERSION_AUTHOR = "Erick Salas"
 
 def todo_version_print_full ():
