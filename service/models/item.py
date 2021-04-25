@@ -1,4 +1,4 @@
-import time
+import datetime
 
 from bson import json_util
 from bson.objectid import ObjectId
@@ -28,7 +28,7 @@ def item_create (title, description, user_id):
 	item.title = title
 	item.description = description
 	item.user_id = user_id
-	item.date = time.time ()
+	item.date = datetime.datetime.utcnow ()
 
 	return item
 
@@ -37,6 +37,18 @@ def items_get_all_by_user (user_id):
 	all_items = items.find ({'user': ObjectId (user_id)})
 	if (all_items is not None):
 		result = json_util.dumps (all_items)
+
+	return result
+
+def item_get_by_id_and_user (item_id, user_id):
+	result = None
+	found = items.find_one ({
+		'_id': ObjectId (item_id),
+		'user': ObjectId (user_id)
+	})
+
+	if (found is not None):
+		result = json_util.dumps (found)
 
 	return result
 
