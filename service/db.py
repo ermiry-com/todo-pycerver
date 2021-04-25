@@ -6,6 +6,7 @@ import cerver.utils
 import todo
 
 from models.user import user_model_init
+from models.item import item_model_init
 
 todo_db = None
 
@@ -20,6 +21,7 @@ def todo_mongo_init ():
 		)
 
 		user_model_init (todo_db)
+		item_model_init (todo_db)
 
 	except:
 		cerver.utils.cerver_log_error (
