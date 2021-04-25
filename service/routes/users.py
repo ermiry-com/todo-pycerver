@@ -46,4 +46,19 @@ def users_register_handler (http_receive, request):
 # POST /api/users/login
 @ctypes.CFUNCTYPE (None, ctypes.c_void_p, ctypes.c_void_p)
 def users_login_handler (http_receive, request):
-	pass
+	body = cerver.http_request_get_body (request)
+
+	error, user = controllers.users.todo_users_login (body)
+
+	if error == TODO_ERROR_NONE:
+		response = controllers.users.todo_user_generate_token (http_receive, user)
+		cerver.http_response_compile (response)
+
+		if todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT:
+			cerver.http_response_print (response)
+
+		cerver.http_response_send (response, http_receive)
+		cerver.http_response_delete (response)
+
+	else:
+		todo_error_send_response (error, http_receive)
