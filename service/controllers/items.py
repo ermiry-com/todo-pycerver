@@ -9,6 +9,11 @@ from models.item import *
 def todo_items_get_all_by_user (user):
 	return items_get_all_by_user (user.id)
 
+def todo_item_get_by_id_and_user (item_id_str, user):
+	return item_get_by_id_and_user (
+		item_id_str.contents.str.decode ("utf-8"), user.id
+	)
+
 def todo_item_create (body_json, user):
 	error = TODO_ERROR_NONE
 
