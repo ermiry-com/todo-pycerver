@@ -2,7 +2,14 @@ import ctypes
 import json
 import time
 
-import cerver.utils
+from cerver.http import HTTP_STATUS_OK
+from cerver.http import http_receive_get_cerver
+from cerver.http import http_cerver_auth_jwt_new, http_cerver_auth_jwt_delete
+from cerver.http import http_cerver_auth_jwt_add_value, http_cerver_auth_jwt_add_value_int
+from cerver.http import http_cerver_auth_generate_bearer_jwt_json
+from cerver.http import http_jwt_get_json, http_jwt_get_json_len
+from cerver.http import http_response_create
+from cerver.utils import cerver_log_success, cerver_log_warning
 
 from errors import *
 import runtime
@@ -50,21 +57,21 @@ def todo_users_register (body_json):
 					user = user_create (email, name, username, password)
 					saved_user = user_insert (user)
 					
-					cerver.utils.cerver_log_success (
+					cerver_log_success (
 						"Created a new user!".encode ("utf-8")
 					)
 
 					print (user)
 
 				else:
-					cerver.utils.cerver_log_warning (
+					cerver_log_warning (
 						"Passwords do not match!".encode ("utf-8")
 					);
 
 					error = TODO_ERROR_BAD_REQUEST
 
 			else:
-				cerver.utils.cerver_log_warning (
+				cerver_log_warning (
 					"User already exists!".encode ("utf-8")
 				);
 
@@ -79,21 +86,21 @@ def todo_users_register (body_json):
 	return error
 
 def todo_user_generate_token (http_receive, user):
-	http_jwt = cerver.http_cerver_auth_jwt_new ();
-	cerver.http_cerver_auth_jwt_add_value_int (http_jwt, "iat".encode ('utf-8'), int (time.time ()));
-	cerver.http_cerver_auth_jwt_add_value (http_jwt, "id".encode ('utf-8'), user.id.encode ('utf-8'));
-	cerver.http_cerver_auth_jwt_add_value (http_jwt, "name".encode ('utf-8'), user.name.encode ('utf-8'));
-	cerver.http_cerver_auth_jwt_add_value (http_jwt, "username".encode ('utf-8'), user.username.encode ('utf-8'));
-	cerver.http_cerver_auth_jwt_add_value (http_jwt, "role".encode ('utf-8'), "common".encode ('utf-8'));
+	http_jwt = http_cerver_auth_jwt_new ();
+	http_cerver_auth_jwt_add_value_int (http_jwt, "iat".encode ('utf-8'), int (time.time ()));
+	http_cerver_auth_jwt_add_value (http_jwt, "id".encode ('utf-8'), user.id.encode ('utf-8'));
+	http_cerver_auth_jwt_add_value (http_jwt, "name".encode ('utf-8'), user.name.encode ('utf-8'));
+	http_cerver_auth_jwt_add_value (http_jwt, "username".encode ('utf-8'), user.username.encode ('utf-8'));
+	http_cerver_auth_jwt_add_value (http_jwt, "role".encode ('utf-8'), "common".encode ('utf-8'));
 
-	cerver.http_cerver_auth_generate_bearer_jwt_json (cerver.http_receive_get_cerver (http_receive), http_jwt)
+	http_cerver_auth_generate_bearer_jwt_json (http_receive_get_cerver (http_receive), http_jwt)
 
-	response = cerver.http_response_create (
-		cerver.HTTP_STATUS_OK,
-		cerver.http_jwt_get_json (http_jwt), cerver.http_jwt_get_json_len (http_jwt)
+	response = http_response_create (
+		HTTP_STATUS_OK,
+		http_jwt_get_json (http_jwt), http_jwt_get_json_len (http_jwt)
 	)
 
-	cerver.http_cerver_auth_jwt_delete (http_jwt)
+	http_cerver_auth_jwt_delete (http_jwt)
 
 	return response
 
@@ -109,7 +116,7 @@ def todo_users_login (body_json):
 
 		if (email and password):
 			user = todo_user_get_by_email (email)
-			if todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT:
+			if (todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT):
 				print (user)
 			
 			if (user.password != password):
