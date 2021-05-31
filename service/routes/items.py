@@ -1,7 +1,12 @@
 import ctypes
 import json
 
-import cerver
+from cerver.http import HTTP_STATUS_OK, HTTP_STATUS_NOT_FOUND
+from cerver.http import http_request_get_decoded_data
+from cerver.http import http_request_get_body, http_request_get_param_at_idx
+from cerver.http import http_response_render_json
+from cerver.http import http_response_json_msg, http_response_json_error
+from cerver.http import http_response_print, http_response_send, http_response_delete
 
 from errors import *
 import runtime
@@ -15,13 +20,13 @@ import controllers.users
 @ctypes.CFUNCTYPE (None, ctypes.c_void_p, ctypes.c_void_p)
 def todo_items_handler (http_receive, request):
 	user = controllers.users.todo_user_load_from_decoded_data (
-		cerver.http_request_get_decoded_data (request)
+		http_request_get_decoded_data (request)
 	)
 	
 	result = controllers.items.todo_items_get_all_by_user (user)
 	if (result is not None):
-		cerver.http_response_render_json (
-			http_receive, result.encode ("utf-8"), len (result)
+		http_response_render_json (
+			http_receive, HTTP_STATUS_OK, result.encode ("utf-8"), len (result)
 		)
 
 	else:
@@ -29,8 +34,8 @@ def todo_items_handler (http_receive, request):
 			"items": []
 		})
 
-		cerver.http_response_render_json (
-			http_receive, response.encode ("utf-8"), len (response)
+		http_response_render_json (
+			http_receive, HTTP_STATUS_OK, response.encode ("utf-8"), len (response)
 		)
 
 # POST /api/todo/items
@@ -38,24 +43,24 @@ def todo_items_handler (http_receive, request):
 @ctypes.CFUNCTYPE (None, ctypes.c_void_p, ctypes.c_void_p)
 def todo_item_create_handler (http_receive, request):
 	user = controllers.users.todo_user_load_from_decoded_data (
-		cerver.http_request_get_decoded_data (request)
+		http_request_get_decoded_data (request)
 	)
 
-	body = cerver.http_request_get_body (request)
+	body = http_request_get_body (request)
 
 	result = controllers.items.todo_item_create (user, body)
 
-	if result == TODO_ERROR_NONE:
-		response = cerver.http_response_json_msg (
-			cerver.HTTP_STATUS_OK,
+	if (result == TODO_ERROR_NONE):
+		response = http_response_json_msg (
+			HTTP_STATUS_OK,
 			"Created a new item!".encode ('utf-8')
 		)
 
-		if todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT:
-			cerver.http_response_print (response)
+		if (todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT):
+			http_response_print (response)
 
-		cerver.http_response_send (response, http_receive)
-		cerver.http_response_delete (response)
+		http_response_send (response, http_receive)
+		http_response_delete (response)
 
 	else:
 		todo_error_send_response (result, http_receive)
@@ -65,10 +70,10 @@ def todo_item_create_handler (http_receive, request):
 @ctypes.CFUNCTYPE (None, ctypes.c_void_p, ctypes.c_void_p)
 def todo_item_get_handler (http_receive, request):
 	user = controllers.users.todo_user_load_from_decoded_data (
-		cerver.http_request_get_decoded_data (request)
+		http_request_get_decoded_data (request)
 	)
 
-	item_id_str = cerver.http_request_get_param_at_idx (
+	item_id_str = http_request_get_param_at_idx (
 		request, 0
 	)
 
@@ -77,51 +82,51 @@ def todo_item_get_handler (http_receive, request):
 	)
 
 	if (result is not None):
-		cerver.http_response_render_json (
-			http_receive, result.encode ("utf-8"), len (result)
+		http_response_render_json (
+			http_receive, HTTP_STATUS_OK, result.encode ("utf-8"), len (result)
 		)
 
 	else:
-		response = cerver.http_response_json_error (
-			cerver.HTTP_STATUS_NOT_FOUND,
+		response = http_response_json_error (
+			HTTP_STATUS_NOT_FOUND,
 			"Item not found".encode ('utf-8')
 		)
 
-		if todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT:
-			cerver.http_response_print (response)
+		if (todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT):
+			http_response_print (response)
 
-		cerver.http_response_send (response, http_receive)
-		cerver.http_response_delete (response)
+		http_response_send (response, http_receive)
+		http_response_delete (response)
 
 # PUT /api/todo/items/:id/update
 # a user wants to update an existing item
 @ctypes.CFUNCTYPE (None, ctypes.c_void_p, ctypes.c_void_p)
 def todo_item_update_handler (http_receive, request):
 	user = controllers.users.todo_user_load_from_decoded_data (
-		cerver.http_request_get_decoded_data (request)
+		http_request_get_decoded_data (request)
 	)
 
-	item_id_str = cerver.http_request_get_param_at_idx (
+	item_id_str = http_request_get_param_at_idx (
 		request, 0
 	)
 
-	body = cerver.http_request_get_body (request)
+	body = http_request_get_body (request)
 
 	result = controllers.items.todo_item_update (
 		item_id_str, user, body
 	)
 
-	if result == TODO_ERROR_NONE:
-		response = cerver.http_response_json_msg (
-			cerver.HTTP_STATUS_OK,
+	if (result == TODO_ERROR_NONE):
+		response = http_response_json_msg (
+			HTTP_STATUS_OK,
 			"Updated item!".encode ('utf-8')
 		)
 
-		if todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT:
-			cerver.http_response_print (response)
+		if (todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT):
+			http_response_print (response)
 
-		cerver.http_response_send (response, http_receive)
-		cerver.http_response_delete (response)
+		http_response_send (response, http_receive)
+		http_response_delete (response)
 
 	else:
 		todo_error_send_response (result, http_receive)
@@ -131,10 +136,10 @@ def todo_item_update_handler (http_receive, request):
 @ctypes.CFUNCTYPE (None, ctypes.c_void_p, ctypes.c_void_p)
 def todo_item_delete_handler (http_receive, request):
 	user = controllers.users.todo_user_load_from_decoded_data (
-		cerver.http_request_get_decoded_data (request)
+		http_request_get_decoded_data (request)
 	)
 
-	item_id_str = cerver.http_request_get_param_at_idx (
+	item_id_str = http_request_get_param_at_idx (
 		request, 0
 	)
 
@@ -143,26 +148,26 @@ def todo_item_delete_handler (http_receive, request):
 	)
 
 	if (result):
-		response = cerver.http_response_json_msg (
-			cerver.HTTP_STATUS_OK,
+		response = http_response_json_msg (
+			HTTP_STATUS_OK,
 			"Deleted item!".encode ('utf-8')
 		)
 
 		if todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT:
-			cerver.http_response_print (response)
+			http_response_print (response)
 
-		cerver.http_response_send (response, http_receive)
-		cerver.http_response_delete (response)
+		http_response_send (response, http_receive)
+		http_response_delete (response)
 
 	else:
-		response = cerver.http_response_json_error (
-			cerver.HTTP_STATUS_NOT_FOUND,
+		response = http_response_json_error (
+			HTTP_STATUS_NOT_FOUND,
 			"Item not found".encode ('utf-8')
 		)
 
 		if todo.RUNTIME == runtime.RUNTIME_TYPE_DEVELOPMENT:
-			cerver.http_response_print (response)
+			http_response_print (response)
 
-		cerver.http_response_send (response, http_receive)
-		cerver.http_response_delete (response)
+		http_response_send (response, http_receive)
+		http_response_delete (response)
 	
