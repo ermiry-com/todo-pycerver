@@ -33,6 +33,12 @@ def todo_set_todo_routes (http_cerver):
 	version_route = http_route_create (REQUEST_METHOD_GET, "version".encode ('utf-8'), version_handler)
 	http_route_child_add (main_route, version_route)
 
+	# GET /api/todo/auth
+	auth_route = http_route_create (REQUEST_METHOD_GET, "auth".encode ('utf-8'), auth_handler)
+	http_route_set_auth (auth_route, HTTP_ROUTE_AUTH_TYPE_BEARER)
+	http_route_set_decode_data_into_json (auth_route)
+	http_route_child_add (main_route, auth_route)
+
 	# items
 	# GET api/todo/items
 	items_route = http_route_create (REQUEST_METHOD_GET, "items".encode ('utf-8'), todo_items_handler)
