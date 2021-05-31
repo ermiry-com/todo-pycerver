@@ -1,4 +1,5 @@
-import cerver
+from cerver.http import HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_INTERNAL_SERVER_ERROR
+from cerver.http import http_response_json_key_value, http_response_send, http_response_delete
 
 TODO_ERROR_NONE = 0
 TODO_ERROR_BAD_REQUEST = 1
@@ -20,32 +21,32 @@ def todo_errors_init ():
 	global existing_user_error
 	global server_error
 
-	bad_request_error = cerver.http_response_json_key_value (
-		cerver.HTTP_STATUS_BAD_REQUEST,
+	bad_request_error = http_response_json_key_value (
+		HTTP_STATUS_BAD_REQUEST,
 		"error".encode ("utf-8"),
 		"Bad request!".encode ("utf-8")
 	)
 
-	bad_user_error = cerver.http_response_json_key_value (
-		cerver.HTTP_STATUS_BAD_REQUEST,
+	bad_user_error = http_response_json_key_value (
+		HTTP_STATUS_BAD_REQUEST,
 		"error".encode ("utf-8"),
 		"Bad user!".encode ("utf-8")
 	)
 
-	missing_values = cerver.http_response_json_key_value (
-		cerver.HTTP_STATUS_BAD_REQUEST,
+	missing_values = http_response_json_key_value (
+		HTTP_STATUS_BAD_REQUEST,
 		"error".encode ("utf-8"),
 		"Missing values!".encode ("utf-8")
 	)
 
-	existing_user_error = cerver.http_response_json_key_value (
-		cerver.HTTP_STATUS_BAD_REQUEST,
+	existing_user_error = http_response_json_key_value (
+		HTTP_STATUS_BAD_REQUEST,
 		"error".encode ("utf-8"),
 		"User already exists!".encode ("utf-8")
 	)
 
-	server_error = cerver.http_response_json_key_value (
-		cerver.HTTP_STATUS_INTERNAL_SERVER_ERROR,
+	server_error = http_response_json_key_value (
+		HTTP_STATUS_INTERNAL_SERVER_ERROR,
 		"error".encode ("utf-8"),
 		"Server error!".encode ("utf-8")
 	)
@@ -55,19 +56,19 @@ def todo_error_send_response (todo_error, http_receive):
 		pass
 
 	if (todo_error == TODO_ERROR_BAD_REQUEST):
-		cerver.http_response_send (bad_request_error, http_receive)
+		http_response_send (bad_request_error, http_receive)
 
 	if (todo_error == TODO_ERROR_MISSING_VALUES):
-		cerver.http_response_send (missing_values, http_receive)
+		http_response_send (missing_values, http_receive)
 
 	if (todo_error == TODO_ERROR_BAD_USER):
-		cerver.http_response_send (bad_user_error, http_receive)
+		http_response_send (bad_user_error, http_receive)
 
 	if (todo_error == TODO_ERROR_EXISTING_USER):
-		cerver.http_response_send (existing_user_error, http_receive)
+		http_response_send (existing_user_error, http_receive)
 
 	if (todo_error == TODO_ERROR_SERVER_ERROR):
-		cerver.http_response_send (server_error, http_receive)
+		http_response_send (server_error, http_receive)
 
 def todo_errors_end ():
 	global bad_request_error
@@ -76,8 +77,8 @@ def todo_errors_end ():
 	global existing_user_error
 	global server_error
 
-	cerver.http_response_delete (bad_request_error)
-	cerver.http_response_delete (bad_user_error)
-	cerver.http_response_delete (missing_values)
-	cerver.http_response_delete (existing_user_error)
-	cerver.http_response_delete (server_error)
+	http_response_delete (bad_request_error)
+	http_response_delete (bad_user_error)
+	http_response_delete (missing_values)
+	http_response_delete (existing_user_error)
+	http_response_delete (server_error)
