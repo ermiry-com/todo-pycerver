@@ -22,6 +22,5 @@ if __name__ == "__main__":
 
 	todo_config ()
 
-	db.todo_mongo_init ()
-
-	service.start ()
+	if (db.todo_mongo_init ()):
+		service.start ()
